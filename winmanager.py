@@ -55,9 +55,12 @@ class Screen():
 		win32gui.SetForegroundWindow(window.hwnd)
 
 	def find_window(self, name):
-		name, confidence = fuzzywuzzy.process.extractOne(name, self.windows)
-		return name
-		
+		names = [ window.name for window in self.windows.values() ]
+		name, confidence = fuzzywuzzy.process.extractOne(name, names)
+		for window in self.windows.values():
+			if window.name == name:
+				return window
+
 	'''TODO: Freeze in layers
 		freeze() and restore() not yet fully functional'''
 	def freeze(self):
