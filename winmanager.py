@@ -52,3 +52,13 @@ class Screen():
 	def bring_window_to_front(self, window):
 		win32gui.ShowWindow(window.hwnd, 5)
 		win32gui.SetForegroundWindow(window.hwnd)
+
+	'''TODO: Freeze in layers
+		freeze() and restore() not yet fully functional'''
+	def freeze(self):
+		self.frozen_windows = list(self.windows.values()).copy()
+
+	def restore(self):
+		for window in reversed(self.frozen_windows):
+			if window.is_real():
+				self.bring_window_to_front(window)
