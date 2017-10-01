@@ -53,7 +53,7 @@ class Screen():
 	def bring_window_to_front(self, window):
 		win32gui.ShowWindow(window.hwnd, 5)
 		win32gui.SetForegroundWindow(window.hwnd)
-
+		
 	def find_window(self, name):
 		names = [ window.name for window in self.windows.values() ]
 		name, confidence = fuzzywuzzy.process.extractOne(name, names)
@@ -61,8 +61,10 @@ class Screen():
 			if window.name == name:
 				return window
 
-	'''TODO: Freeze in layers
-		freeze() and restore() not yet fully functional'''
+	'''
+	TODO: Freeze in layers
+	freeze() and restore() not yet fully functional
+	'''
 	def freeze(self):
 		self.frozen_windows = list(self.windows.values()).copy()
 
