@@ -15,7 +15,7 @@ class Window():
 
 	def __repr__(self):
 		return f'Window({self.hwnd}, {self.x}, {self.y}, {self.width}, {self.height}, {self.name})'
-		
+
 	def __eq__(self, other):
 		return other.hwnd == self.hwnd
 
@@ -48,3 +48,7 @@ class Screen():
 
 	def refresh(self):
 		win32gui.EnumWindows(self._add_to_windows, self.windows)
+
+	def bring_window_to_front(self, window):
+		win32gui.ShowWindow(window.hwnd, 5)
+		win32gui.SetForegroundWindow(window.hwnd)
