@@ -1,0 +1,2 @@
+pypiwin32==220
+fuzzywuzzy==0.15.1
