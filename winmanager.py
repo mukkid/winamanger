@@ -81,10 +81,11 @@ class Screen():
 	        self._add_to_windows(next, self.windows)
 
 	def refresh(self):
+		self.windows = OrderedDict()
 		self.get_windows()
 
 	def bring_window_to_front(self, window):
-		win32gui.ShowWindow(window.hwnd, 5)
+		win32gui.ShowWindow(window.hwnd, 1)
 		win32gui.SetForegroundWindow(window.hwnd)
 
 	def find_window(self, name):
@@ -95,13 +96,21 @@ class Screen():
 				return window
 
 	'''
-	TODO: Freeze in layers
-	freeze() and restore() not yet fully functional
+	TODO:
+	freeze fullscreen properly
 	'''
+	
 	def freeze(self):
 		self.frozen_windows = list(self.windows.values())
 
 	def restore(self):
-		for window in reversed(self.frozen_windows):
+		for window in self.frozen_windows:
 			if window.is_real():
-				self.bring_window_to_front(window)
+				win32gui.SetWindowPos(window.hwnd,
+					win32con.HWND_NOTOPMOST,
+					window.x,
+					window.y,
+					window.width,
+					window.height,
+					win32con.SWP_SHOWWINDOW)
+				win32gui.ShowWindow(window.hwnd, 1)
