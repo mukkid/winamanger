@@ -1,1 +1,1 @@
-# winamanger
+# winmanager
