@@ -1,9 +1,9 @@
+import ctypes
 from collections import OrderedDict
 
 import fuzzywuzzy
 import win32gui
 import win32con
-import ctypes
 
 class Window():
 	def __init__(self, hwnd, x, y, width, height, name):
@@ -13,6 +13,10 @@ class Window():
 		self.width = width
 		self.height = height
 		self.name = name
+		try:
+			self.positional_info()
+		except:
+			raise Exception(f'Could not get positional_info of window id {self.hwnd}')
 
 	def __len__(self):
 		return (self.width, self.height)
@@ -26,7 +30,7 @@ class Window():
 	def is_real(self):
 	    if not win32gui.IsWindowVisible(self.hwnd):
 	        return False
-	    if win32gui.GetParent(self.hwnd) != 0:
+	    if win32gui.GetParent(self.hwnd):
 	        return False
 	    hasNoOwner = win32gui.GetWindow(self.hwnd, win32con.GW_OWNER) == 0
 	    lExStyle = win32gui.GetWindowLong(self.hwnd, win32con.GWL_EXSTYLE)
@@ -40,7 +44,7 @@ class Window():
 	def is_real_from_hwnd(hwnd):
 	    if not win32gui.IsWindowVisible(hwnd):
 	        return False
-	    if win32gui.GetParent(hwnd) != 0:
+	    if win32gui.GetParent(hwnd):
 	        return False
 	    hasNoOwner = win32gui.GetWindow(hwnd, win32con.GW_OWNER) == 0
 	    lExStyle = win32gui.GetWindowLong(hwnd, win32con.GWL_EXSTYLE)
@@ -49,6 +53,9 @@ class Window():
 	        if win32gui.GetWindowText(hwnd):
 	            return True
 	    return False
+
+	def positional_info(self):
+		self.placement = win32gui.GetWindowPlacement(self.hwnd)
 
 
 class Screen():
@@ -99,18 +106,20 @@ class Screen():
 	TODO:
 	freeze fullscreen properly
 	'''
-	
+
 	def freeze(self):
 		self.frozen_windows = list(self.windows.values())
 
 	def restore(self):
 		for window in self.frozen_windows:
 			if window.is_real():
-				win32gui.SetWindowPos(window.hwnd,
-					win32con.HWND_NOTOPMOST,
-					window.x,
-					window.y,
-					window.width,
-					window.height,
-					win32con.SWP_SHOWWINDOW)
-				win32gui.ShowWindow(window.hwnd, 1)
+				win32gui.BringWindowToTop(window.hwnd)
+				win32gui.SetWindowPlacement(window.hwnd, window.placement)
+				# win32gui.SetWindowPos(window.hwnd,
+				# 	win32con.HWND_NOTOPMOST,
+				# 	window.x,
+				# 	window.y,
+				# 	window.width,
+				# 	window.height,
+				# 	win32con.SWP_SHOWWINDOW)
+				# win32gui.ShowWindow(window.hwnd, 1)
